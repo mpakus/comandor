@@ -8,8 +8,7 @@ class MyBasic
   end
 end
 
-class ServiceTransact
-  extend Comandor
+class ServiceTransact < ParentClass
   transaction! 'MyBasic.transaction'
 
   def perform(second, first)

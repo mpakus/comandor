@@ -14,6 +14,12 @@ module Comandor
 
   # ClassName.perform
   module ClassMethods
+    # Callback when inherited from Comandor class
+    def inherited(child)
+      child.prepend(Comandor)
+      child.extend(ClassMethods)
+    end
+
     def perform(*args, &block)
       new.perform(*args, &block)
     end
@@ -37,13 +43,13 @@ module Comandor
   # @return [self]
   def perform(*args, &block)
     raise NoMethodError unless defined?(:perform)
-    if self.class.transaction_klass && self.class.transaction_method
-      @result = Object.const_get(self.class.transaction_klass).send self.class.transaction_method.to_sym do
-        super
-      end
-    else
-      @result = super
-    end
+    @result = if self.class.transaction_klass && self.class.transaction_method
+                Object.const_get(self.class.transaction_klass).send self.class.transaction_method.to_sym do
+                  super
+                end
+              else
+                super
+              end
     @done = true
     self
   end
@@ -51,7 +57,7 @@ module Comandor
   # Add new error to key array
   # @param key [Symbol]
   # @param message [String]
-  # @return [self]
+  # @return [False]
   def error(key, message)
     errors[key] ||= []
     if message.is_a? Array
@@ -59,7 +65,7 @@ module Comandor
     else
       errors[key] << message
     end
-    self
+    false
   end
 
   # Are we done here?

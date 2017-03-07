@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative './services/parent_class'
 require_relative './services/success'
 require_relative './services/fail'
 require_relative './services/fail_errors_array'
