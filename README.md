@@ -1,8 +1,7 @@
 # Comandor
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/comandor`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Service Object are used to encapsulate your application's business logic. 
+In single-purpose (Singe Responsibility principle) each service object represents one thing that your application does.
 
 ## Installation
 
@@ -22,7 +21,47 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+
+# Service class
+class DepositCreate
+  extend Comandor
+
+  # initialize object with some arguments as usual Ruby object (optional)
+  def initialize(user, amount)
+    @user = user
+    @amount = user
+  end
+
+  # then you have to define: #perform method 
+  # and result of call will be in the #result instance variable
+  def perform
+    return error(:amount, 'Deposit amount should be more than $100') if @amount < 100
+    create_deposit
+  end
+  
+  private
+  
+  def create_deposit
+    @user.deposits.create(amount: @amount)
+  end
+end
+```
+
+In the Controller:
+
+```ruby
+class DepositsController < ApplicationController
+  def create
+    deposit_create = DepositCreate.new(current_user, 100).perform
+    if deposit_create.success?
+      redirect_to root_path, notice: 'Deposit created'
+    else
+      redirect_to root_path, alert: deposit_create.errors[:amount].join("\n")
+    end
+  end
+end
+```
 
 ## Development
 
@@ -32,7 +71,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/comandor. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/mpakus/comandor. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 
 ## License
