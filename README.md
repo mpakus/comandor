@@ -1,7 +1,9 @@
 # Comandor
 
-Service Object are used to encapsulate your application's business logic. 
-In single-purpose (Singe Responsibility principle) each service object represents one thing that your application does.
+[![CircleCI](https://circleci.com/gh/mpakus/comandor.svg?style=svg)](https://circleci.com/gh/mpakus/comandor)
+
+Service Object (Interactor, Command) are used to encapsulate your application's business logic. 
+To keep Singe Responsibility principle each service object represents only one thing that your application does.
 
 ## Installation
 
@@ -23,18 +25,22 @@ Or install it yourself as:
 
 ```ruby
 
-# Service class
+# Your Service class
 class DepositCreate
-  extend Comandor
+  extend Comandor # here we are!
 
-  # initialize object with some arguments as usual Ruby object (optional)
+  # Initialize object with some arguments as usual Ruby object (of course it's optional)
   def initialize(user, amount)
     @user = user
-    @amount = user
+    @amount = amount
   end
 
-  # then you have to define: #perform method 
-  # and result of call will be in the #result instance variable
+  # Define your business logic by implementing the #perform method.
+  # Results of call will be in the #result method of instance.
+  # #perform will return the instance of your Class.
+  # You can use the #success? method to check if results it is a valid
+  # or fail? (failed?) if it’s invalid.
+  # And you can get all errors with #errors method.
   def perform
     return error(:amount, 'Deposit amount should be more than $100') if @amount < 100
     create_deposit
@@ -77,4 +83,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/mpakus
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
