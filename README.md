@@ -69,6 +69,32 @@ class DepositsController < ApplicationController
 end
 ```
 
+Another option to call #perform with any arguments
+
+```ruby
+# Another Service class
+class InvoiceSend
+  extend Comandor # here we are!
+  
+  def perform(email = nil, amount = 0)
+    return error(:amount, 'Deposit amount should be more than $100') if amount < 100
+    return error(:email, 'E-mail is blank') unless email
+    create_and_send_invoice(email, amount)
+  end
+  
+  private
+  
+  def create_and_send_invoice(email, amount)
+    # ... your another code is here    
+  end    
+end
+```
+
+in use:
+```ruby
+delivery = InvoiceSend.new.perform('renat@aomega.co', 100)
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

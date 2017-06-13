@@ -2,6 +2,7 @@
 
 require_relative './services/success'
 require_relative './services/fail'
+require_relative './services/params'
 require_relative './services/no_method'
 
 RSpec.describe Comandor do
@@ -34,6 +35,7 @@ RSpec.describe Comandor do
 
     it { expect(subject.success?).to be_truthy }
     it { expect(subject.fail?).to be_falsey }
+    it { expect(subject.failed?).to be_falsey }
     it { expect(subject.result).to eq 'Vader 100' }
   end
 
@@ -56,5 +58,24 @@ RSpec.describe Comandor do
     subject { ServiceNoMethod.new }
 
     it { expect{ subject.perform }.to raise_error NoMethodError }
+  end
+
+  context 'when #perform wants arguments' do
+    describe 'with arguments' do
+      subject { ServiceParams.new.perform('Vader', 100) }
+
+      it { is_expected.to be_a(Comandor) }
+      it { is_expected.to be_a(ServiceParams) }
+
+      it { expect(subject.success?).to be_truthy }
+      it { expect(subject.fail?).to be_falsey }
+      it { expect(subject.failed?).to be_falsey }
+
+      it { expect(subject.result).to eq 'Vader 100' }
+    end
+
+    describe 'without arguments' do
+      it { expect{ ServiceParams.new.perform }.to raise_error(ArgumentError) }
+    end
   end
 end

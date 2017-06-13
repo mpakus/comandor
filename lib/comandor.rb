@@ -12,7 +12,7 @@ module Comandor
   end
 
   # @return [self]
-  def perform
+  def perform(*args)
     raise NoMethodError unless defined?(:perform)
     @result = super
     @done = true
