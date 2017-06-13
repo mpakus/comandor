@@ -58,10 +58,10 @@ RSpec.describe Comandor do
   context 'when perform method not implemented' do
     subject { ServiceNoMethod.new }
 
-    it { expect{ subject.perform }.to raise_error NoMethodError }
+    it { expect { subject.perform }.to raise_error NoMethodError }
   end
 
-  context 'when #perform wants arguments' do
+  context 'when #perform with simple arguments' do
     describe 'with arguments' do
       subject { ServiceParams.new.perform('Vader', 100) }
 
@@ -76,13 +76,17 @@ RSpec.describe Comandor do
     end
 
     describe 'without arguments' do
-      it { expect{ ServiceParams.new.perform }.to raise_error(ArgumentError) }
+      it { expect { ServiceParams.new.perform }.to raise_error(ArgumentError) }
     end
   end
 
-  context 'when #perform wants complex arguments' do
+  context 'when #perform with complex arguments' do
     describe 'with arguments' do
-      subject { ServiceArgs.new.perform 'Vader', {age: 100} do |age| age += 5 end }
+      subject do
+        ServiceArgs.new.perform 'Vader', age: 100 do |age|
+          age + 5
+        end
+      end
 
       it { is_expected.to be_a(Comandor) }
       it { is_expected.to be_a(ServiceArgs) }
@@ -95,7 +99,7 @@ RSpec.describe Comandor do
     end
 
     describe 'without arguments' do
-      it { expect{ ServiceArgs.new.perform }.to raise_error(ArgumentError) }
+      it { expect { ServiceArgs.new.perform }.to raise_error(ArgumentError) }
     end
   end
 end
