@@ -3,6 +3,7 @@
 require_relative './services/success'
 require_relative './services/fail'
 require_relative './services/params'
+require_relative './services/args'
 require_relative './services/no_method'
 
 RSpec.describe Comandor do
@@ -76,6 +77,25 @@ RSpec.describe Comandor do
 
     describe 'without arguments' do
       it { expect{ ServiceParams.new.perform }.to raise_error(ArgumentError) }
+    end
+  end
+
+  context 'when #perform wants complex arguments' do
+    describe 'with arguments' do
+      subject { ServiceArgs.new.perform 'Vader', {age: 100} do |age| age += 5 end }
+
+      it { is_expected.to be_a(Comandor) }
+      it { is_expected.to be_a(ServiceArgs) }
+
+      it { expect(subject.success?).to be_truthy }
+      it { expect(subject.fail?).to be_falsey }
+      it { expect(subject.failed?).to be_falsey }
+
+      it { expect(subject.result).to eq 'Vader 105' }
+    end
+
+    describe 'without arguments' do
+      it { expect{ ServiceArgs.new.perform }.to raise_error(ArgumentError) }
     end
   end
 end
