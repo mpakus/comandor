@@ -25,7 +25,11 @@ module Comandor
   # @return [self]
   def error(key, message)
     errors[key] ||= []
-    errors[key] << message
+    if message.is_a? Array
+      errors[key] = errors[key] + message
+    else
+      errors[key] << message
+    end
     self
   end
 

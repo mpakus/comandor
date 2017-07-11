@@ -42,6 +42,7 @@ class DepositCreate
   # or fail? (failed?) if it’s invalid.
   # And you can get all errors with #errors method.
   def perform
+    # .error method adds message to the :amount field
     return error(:amount, 'Deposit amount should be more than $100') if @amount < 100
     create_deposit
   end
@@ -93,6 +94,72 @@ end
 in use:
 ```ruby
 delivery = InvoiceSend.new.perform('renat@aomega.co', 100)
+if delivery.success?
+  # all good
+  puts delivery.result
+else
+  # Houston, we have a problem 
+  puts deliver.errors.inspect  
+end
+```
+
+state methods:
+```ruby
+# was last .perform call success or not
+delivery.success?
+
+# results of .perform call
+delivery.result
+
+# Hash of errors
+#{
+#  'field1': ['error message 1', 'error message 2'],
+#  'field2': ['error message 3']
+#}
+delivery.errors
+```
+
+one more example:
+```ruby
+class User::Registration
+  attr_reader :user, :bank_account
+  extend Comandor
+    
+  def initialize(params)
+    @params = params
+  end
+  
+  def perform
+    create_user! && create_bank_account!
+  end
+  
+  private
+  
+  def create_user!
+    @user = User.new(@params)
+    return true if @user.save
+    error(:user, @user.errors.to_a)
+    false
+  end
+  
+  def create_bank_account!
+    @bank_account = Bank::Account.new(user: @user)
+    return true if @bank_account.save
+    error(:bank_account, @bank_account.errors.to_a)
+    false
+  end
+end
+```
+
+example of using:
+```ruby
+  registration = User::Registration.new(user_params).perform
+  if registration.success?
+    puts registration.user.inspect
+    puts registration.bank_account.inspect
+  else
+    puts registration.errors  
+  end
 ```
 
 ## Development
