@@ -9,6 +9,14 @@ module Comandor
   # Callback on `extend Comandor`
   def self.extended(base)
     base.prepend(self)
+    base.extend(ClassMethods)
+  end
+
+  # ClassName.perform
+  module ClassMethods
+    def perform(*args, &block)
+      self.new.perform(*args, &block)
+    end
   end
 
   # @return [self]

@@ -70,6 +70,12 @@ class DepositsController < ApplicationController
 end
 ```
 
+or just
+
+```ruby
+    deposit_create = DepositCreate.perform(current_user, 100)
+```
+
 Another option to call #perform with any arguments
 
 ```ruby
@@ -101,6 +107,10 @@ else
   # Houston, we have a problem 
   puts deliver.errors.inspect  
 end
+```
+or
+```ruby
+delivery = InvoiceSend.perform('renat@aomega.co', 100)
 ```
 
 state methods:
