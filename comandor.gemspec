@@ -1,4 +1,3 @@
-# coding: utf-8
 # frozen_string_literal: true
 
 lib = File.expand_path('../lib', __FILE__)
@@ -8,7 +7,7 @@ require 'comandor/version'
 Gem::Specification.new do |spec|
   spec.name          = 'comandor'
   spec.version       = Comandor::VERSION
-  spec.authors       = ['Renat Ibragimov']
+  spec.authors       = ['Renat "MpaK" Ibragimov']
   spec.email         = ['mrak69@gmail.com']
 
   spec.summary       = 'Comandor - simple service objects in Ruby'

@@ -30,7 +30,7 @@ RSpec.describe Comandor do
     end
   end
 
-  context 'when result is success?' do
+  context 'when result is #success?' do
     subject { service.perform }
 
     it { is_expected.to be_a(Comandor) }
@@ -42,7 +42,7 @@ RSpec.describe Comandor do
     it { expect(subject.result).to eq 'Vader 100' }
   end
 
-  context 'when result is fail?' do
+  context 'when result is #fail?' do
     subject { service_error.perform }
 
     it { is_expected.to be_a(Comandor) }
@@ -57,7 +57,7 @@ RSpec.describe Comandor do
     it { expect(subject.errors).to include(age: [:blank]) }
   end
 
-  context 'when result is fail with errors array?' do
+  context 'when result is #fail? with errors' do
     subject { service_errors.perform }
 
     it { is_expected.to be_a(Comandor) }
@@ -72,7 +72,7 @@ RSpec.describe Comandor do
     it { expect(subject.errors).to include(age: [:blank]) }
   end
 
-  context 'when perform method not implemented' do
+  context 'when #perform method not implemented' do
     subject { ServiceNoMethod.new }
 
     it { expect { subject.perform }.to raise_error NoMethodError }
@@ -117,6 +117,32 @@ RSpec.describe Comandor do
 
     describe 'without arguments' do
       it { expect { ServiceArgs.new.perform }.to raise_error(ArgumentError) }
+    end
+  end
+
+  describe '.perform' do
+    context 'with arguments' do
+      subject do
+        ServiceArgs.perform 'Vader', age: 100 do |age|
+          age + 5
+        end
+      end
+
+      it { is_expected.to be_a(Comandor) }
+      it { is_expected.to be_a(ServiceArgs) }
+
+      it { expect(subject.success?).to be_truthy }
+      it { expect(subject.fail?).to be_falsey }
+      it { expect(subject.failed?).to be_falsey }
+
+      it { expect(subject.result).to eq 'Vader 105' }
+
+      it { expect { ServiceNoMethod.perform }.to raise_error NoMethodError }
+    end
+
+    context 'without arguments' do
+      it { expect { ServiceParams.perform }.to raise_error(ArgumentError) }
+      it { expect { ServiceArgs.perform }.to raise_error(ArgumentError) }
     end
   end
 end
