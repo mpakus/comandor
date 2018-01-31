@@ -6,6 +6,7 @@ require_relative './services/fail_errors_array'
 require_relative './services/params'
 require_relative './services/args'
 require_relative './services/no_method'
+require_relative './services/transact'
 
 RSpec.describe Comandor do
   let!(:service) { ServiceSuccess.new('Vader', '100') }
@@ -143,6 +144,34 @@ RSpec.describe Comandor do
     context 'without arguments' do
       it { expect { ServiceParams.perform }.to raise_error(ArgumentError) }
       it { expect { ServiceArgs.perform }.to raise_error(ArgumentError) }
+    end
+  end
+
+  context 'with transaction' do
+    describe '.perform' do
+      subject { ServiceTransact.perform 'Vader', 'Darth' }
+
+      it { is_expected.to be_a(Comandor) }
+      it { is_expected.to be_a(ServiceTransact) }
+
+      it { expect(subject.success?).to be_truthy }
+      it { expect(subject.fail?).to be_falsey }
+      it { expect(subject.failed?).to be_falsey }
+
+      it { expect(subject.result).to eq '[ Darth Vader ]' }
+    end
+
+    describe '#perform' do
+      subject { ServiceTransact.new.perform 'Vader', 'Darth' }
+
+      it { is_expected.to be_a(Comandor) }
+      it { is_expected.to be_a(ServiceTransact) }
+
+      it { expect(subject.success?).to be_truthy }
+      it { expect(subject.fail?).to be_falsey }
+      it { expect(subject.failed?).to be_falsey }
+
+      it { expect(subject.result).to eq '[ Darth Vader ]' }
     end
   end
 end

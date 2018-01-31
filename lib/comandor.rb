@@ -17,12 +17,33 @@ module Comandor
     def perform(*args, &block)
       new.perform(*args, &block)
     end
+
+    # Add transaction layer
+    # @param [name] [String] ActiveRecord::Base.transaction
+    def transaction!(name)
+      class_eval { @transaction_klass, @transaction_method = name.split('.') }
+    end
+
+    # Class variables accessor
+    def transaction_klass
+      @transaction_klass
+    end
+
+    def transaction_method
+      @transaction_method
+    end
   end
 
   # @return [self]
   def perform(*args, &block)
     raise NoMethodError unless defined?(:perform)
-    @result = super
+    if self.class.transaction_klass && self.class.transaction_method
+      @result = Object.const_get(self.class.transaction_klass).send self.class.transaction_method.to_sym do
+        super
+      end
+    else
+      @result = super
+    end
     @done = true
     self
   end

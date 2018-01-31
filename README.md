@@ -172,6 +172,22 @@ example of using:
   end
 ```
 
+`transaction!` wrapper around `perform` method look like
+```ruby
+class User::Message
+  extend Comandor
+  transaction! 'ActiveRecord::Base.transaction'
+    
+  def perform(user)
+    @user = user
+    create_message! && send_message! && write_log! &&
+  end
+  #...
+end
+
+User::Message.perform(User.first)
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
