@@ -180,7 +180,7 @@ class User::Message
     
   def perform(user)
     @user = user
-    create_message! && send_message! && write_log! &&
+    create_message! && send_message! && write_log!
   end
   #...
 end
